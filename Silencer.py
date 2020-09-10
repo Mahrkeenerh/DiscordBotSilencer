@@ -58,4 +58,4 @@ async def unmuteAll(ctx):
         await member.remove_roles(muted)
 
 
-bot.run('NzUzMzY5NDczOTcyNjk5MjE4.X1lL_w.p7PZWmQajpHYv_AyEcs_m3BVk8s', bot=True)
+bot.run('TOKEN', bot=True)
