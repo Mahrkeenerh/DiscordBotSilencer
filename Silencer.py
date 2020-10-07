@@ -1,7 +1,7 @@
 import discord, keyboard, time, asyncio
 from discord.ext import commands
 from discord.utils import get
-from threading import Thread
+import random
 
 
 bot = commands.Bot(command_prefix = '!')
@@ -97,13 +97,13 @@ async def renameChannel(ctx, text):
 # Move member
 @bot.command()
 async def move(ctx, member: discord.Member, text):
-    target = discord.utils.get(ctx.message.guild.voice_channels, name=text)
+    target = get(ctx.message.guild.voice_channels, name=text)
     await member.move_to(target)
 
 # Vyvetrat
 @bot.command()
 async def vyvetrajsa(ctx, member: discord.Member):
-    target = discord.utils.get(ctx.message.guild.voice_channels, name="Vetračka")
+    target = get(ctx.message.guild.voice_channels, name="Vetračka")
     await member.move_to(target)
     
 # Change nickname
@@ -138,7 +138,19 @@ async def recursion(ctx, num):
     if num < 5:
         await ctx.send("!recursion " + str(num + 1))
 
-
+# CowSay
+@bot.command()
+async def cowSay(ctx):
+    with open("jokes.txt", "r") as jokes:
+        ran = random.randrange(169)
+        await ctx.send("I ain't no cow you little shit")
+        await ctx.send("Here's your joke:")
+        for line in jokes:
+            if ran == 0:
+                await ctx.send(line)
+                break
+            else:
+                ran -= 1
 
 ##async def muteKey():
 ##    
