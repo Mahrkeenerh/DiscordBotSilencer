@@ -9,11 +9,12 @@ bot = commands.Bot(command_prefix = '!')
 
 silenced = "Silenced"
 divider = "(((|||)))"
+master_role = "Master Of Silence"
 
 # Check if user has Master of Silence role
 def check(ctx):
 
-    master = get(ctx.message.guild.roles, name="Master of Silence")
+    master = get(ctx.message.guild.roles, name=master_role)
     
     for role in ctx.author.roles:
         if role == master:
@@ -88,37 +89,46 @@ async def ban(ctx, member: discord.Member, sudo):
 
 # Add a role to user
 @bot.command(description="used to add a new role to specific user", aliases=["addrole", "AddRole", "Addrole", "ADDROLE"])
-async def addRole(ctx, member: discord.Member, text):
+async def addRole(ctx, member: discord.Member, role_name):
 
-    #if check(ctx):
-        role = get(ctx.message.guild.roles, name=text)
+    if check(ctx):
+        role = get(ctx.message.guild.roles, name=role_name)
+        await member.add_roles(role)
+
+
+# Add master role to user
+@bot.command(description="used to add the Master Of Silence role to specific user", aliases=["Master", "MASTER"])
+async def master(ctx, member: discord.Member):
+
+    if check(ctx):
+        role = get(ctx.message.guild.roles, name=master_role)
         await member.add_roles(role)
 
 
 # Remove a role from user
 @bot.command(description="used to remove a role from specific user", aliases=["removerole", "RemoveRole", "Removerole", "REMOVEROLE"])
-async def removeRole(ctx, member: discord.Member, text):
+async def removeRole(ctx, member: discord.Member, role_name):
 
     if check(ctx):
-        role = get(ctx.message.author.guild.roles, name=text)
+        role = get(ctx.message.author.guild.roles, name=role_name)
         await member.remove_roles(role)
 
 
 # Rename voice channel
 @bot.command(description="used to rename the voice channel user is in", aliases=["renamechannel", "RenameChannel", "Renamechannel", "RENAMECHANNEL"])
-async def renameChannel(ctx, text):
+async def renameChannel(ctx, new_name):
 
     if check(ctx):
         channel = ctx.message.author.voice.channel
-        await channel.edit(name=text)
+        await channel.edit(name=new_name)
 
 
 # Move member to another voice channel
 @bot.command(description="used to move a user to another voice channel", aliases=["Move", "MOVE"])
-async def move(ctx, member: discord.Member, text):
+async def move(ctx, member: discord.Member, channel):
 
     if check(ctx):
-        target = get(ctx.message.guild.voice_channels, name=text)
+        target = get(ctx.message.guild.voice_channels, name=channel)
         await member.move_to(target)
 
 
@@ -133,10 +143,10 @@ async def vyvetrajsa(ctx, member: discord.Member):
 
 # Change nickname of a user
 @bot.command(description="used to change the nickname of a user", aliases=["Rename", "RENAME"])
-async def rename(ctx, member: discord.Member, text):
+async def rename(ctx, member: discord.Member, name):
 
     if check(ctx):
-        await member.edit(nick=text)
+        await member.edit(nick=name)
 
 
 # Maths add
@@ -201,8 +211,8 @@ async def ping(ctx):
 @bot.command(description="used to save a block of text", aliases=["Saveguard", "SaveGuard", "SAVEGUARD"])
 async def saveguard(ctx, text, tag):
 
-    tag = tag.replace("\n", "")
-    text = text.replace("\n", "")
+    tag = tag.replace("\n", "   ")
+    text = text.replace("\n", "   ")
 
     with open("saves.txt", "r+") as file:
 
