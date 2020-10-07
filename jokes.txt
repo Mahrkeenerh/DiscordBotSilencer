@@ -167,3 +167,4 @@ Norton: Incoming virus - (D)ownload and save (R)un after download
 I had a dream... and there were 1's and 0's everywhere, and I think I saw a 2!
 You sir, are an unknown USB device driver
 C isn't that hard: void (*(*f[])())() defines f as an array of unspecified size, of pointers to functions that return pointers to functions that return void
+Why can't skeletons play curch music? They don't have organs.
