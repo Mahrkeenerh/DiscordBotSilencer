@@ -91,7 +91,7 @@ async def ban(ctx, member: discord.Member, sudo):
 @bot.command(description="used to add a new role to specific user", aliases=["addrole", "AddRole", "Addrole", "ADDROLE"])
 async def addRole(ctx, member: discord.Member, role_name):
 
-    if check(ctx):
+    if check(ctx) and str(ctx.message.author).split("#")[0] == "SMAEL":
         role = get(ctx.message.guild.roles, name=role_name)
         await member.add_roles(role)
 
@@ -100,7 +100,7 @@ async def addRole(ctx, member: discord.Member, role_name):
 @bot.command(description="used to add the Master Of Silence role to specific user", aliases=["Master", "MASTER"])
 async def master(ctx, member: discord.Member):
 
-    if check(ctx):
+    if check(ctx) and str(ctx.message.author).split("#")[0] == "SMAEL":
         role = get(ctx.message.guild.roles, name=master_role)
         await member.add_roles(role)
 
