@@ -4,6 +4,7 @@ from discord.utils import get
 import random
 import webbrowser
 import time
+import datetime
 
 
 bot = commands.Bot(command_prefix = '!')
@@ -249,7 +250,7 @@ async def uptime(ctx):
     global startTime
     currentTime = time.time()
     
-    await ctx.send("Uptime: " + str(round(currentTime - startTime, 2)) + "s")
+    await ctx.send("Uptime: " + str(datetime.timedelta(seconds=round(currentTime - startTime, 0))) + " [hh : mm : ss]")
 
 
 # Save text to file
