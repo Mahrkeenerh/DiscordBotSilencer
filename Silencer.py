@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord.utils import get
 import random
 import webbrowser
+import time
 
 
 bot = commands.Bot(command_prefix = '!')
@@ -10,6 +11,7 @@ bot = commands.Bot(command_prefix = '!')
 silenced = "Silenced"
 divider = "(((|||)))"
 master_role = "Master Of Silence"
+startTime = 0
 
 # Check if user has Master of Silence role
 def check(ctx):
@@ -26,6 +28,10 @@ def check(ctx):
 # Print Login message
 @bot.event
 async def on_ready():
+
+    global startTime
+
+    startTime = time.time()
     print('Successfully logged in as {0.user}'.format(bot))
 
 
@@ -234,6 +240,16 @@ async def ai(ctx):
 async def ping(ctx):
     
     await ctx.send("Pong! " + str(bot.latency) + "ms")
+
+
+# Uptime
+@bot.command(description="used to get the uptime of the bot", aliases=["Uptime", "UPTIME"])
+async def uptime(ctx):
+    
+    global startTime
+    currentTime = time.time()
+    
+    await ctx.send("Uptime: " + str(round(currentTime - startTime, 2)) + "s")
 
 
 # Save text to file
