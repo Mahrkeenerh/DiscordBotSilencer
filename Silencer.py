@@ -380,7 +380,7 @@ async def on_message(message):
             
     # OS SUCKS
     if str(message.author).split("#")[0] != "Silencer":
-        if "os" in str(message.content).lower():
+        for i in range(str(message.content).lower().count("os")):
             
             await message.channel.send("OS sucks")
             
