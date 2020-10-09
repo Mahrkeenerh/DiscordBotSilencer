@@ -324,7 +324,7 @@ async def erase(ctx, tag):
             await ctx.send("Not such tag is saved")
 
 
-# ERROR HANDLER
+### ERROR HANDLER
 @bot.event
 async def on_command_error(ctx, error):
 
