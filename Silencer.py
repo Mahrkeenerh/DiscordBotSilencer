@@ -5,6 +5,7 @@ import random
 import webbrowser
 import time
 import datetime
+import asyncio
 
 
 bot = commands.Bot(command_prefix = '!')
@@ -13,6 +14,8 @@ silenced = "Silenced"
 divider = "(((|||)))"
 master_role = "Master Of Silence"
 startTime = 0
+
+
 
 # Check if user has Master of Silence role
 def check(ctx):
@@ -26,7 +29,19 @@ def check(ctx):
     return False
 
 
-# Print Login message
+# Check if a user exists
+def checkUser(ctx, user_substring):
+
+    members = ctx.message.guild.members
+
+    memberList = []
+
+    for member in members:
+        if user_substring.lower() in str(member.nick).lower() or user_substring.lower() in str(member):
+            memberList.append(member)
+
+
+# Bot is ready
 @bot.event
 async def on_ready():
 
@@ -34,6 +49,12 @@ async def on_ready():
 
     startTime = time.time()
     print('Successfully logged in as {0.user}'.format(bot))
+
+    channel = bot.get_channel(634029765694849027)
+
+    await channel.send("Wasup, I'm awake now!")
+
+    bot.loop.create_task(remindMe())
 
 
 # Kill program
@@ -46,6 +67,20 @@ async def killS(ctx):
     await bot.close()
 
 
+# Roles
+@bot.command()
+async def roles(ctx):
+    for role in ctx.message.guild.roles:
+        print(role)
+
+    
+# Members
+@bot.command()
+async def users(ctx):
+    for member in ctx.message.guild.members:
+        print(member)
+
+
 # Mute all in channel
 @bot.command(description="used to mute all users in a voice channel", aliases=["M"])
 async def m(ctx):
@@ -53,10 +88,9 @@ async def m(ctx):
     if not check(ctx):
         return
     
-    channel = ctx.author.voice.channel
     muted = get(ctx.message.guild.roles, name=silenced)
         
-    for member in channel.members:
+    for member in ctx.author.voice.channel.members:
         await member.add_roles(muted)
 
 
@@ -67,44 +101,54 @@ async def u(ctx):
     if not check(ctx):
         return
     
-    channel = ctx.author.voice.channel
     muted = get(ctx.message.guild.roles, name=silenced)
         
-    for member in channel.members:
+    for member in ctx.author.voice.channel.members:
         await member.remove_roles(muted)
 
 
 # Mute specific user
 @bot.command(description="used to mute a specific user", aliases=["Mute", "MUTE"])
-async def mute(ctx, member: discord.Member):
+async def mute(ctx, *, user_substring):
 
     if not check(ctx):
         return
-    
+
     muted = get(ctx.message.guild.roles, name=silenced)
-    await member.add_roles(muted)
+
+    memberList = checkUser(ctx, user_substring)
+
+    for member in memberList:
+        await member.add_roles(muted)
 
 
 # Unmute specific user
 @bot.command(description="used to unmute a specific user", aliases=["Unmute", "UNMUTE"])
-async def unmute(ctx, member: discord.Member):
+async def unmute(ctx, *, user_substring):
 
     if not check(ctx):
         return
     
     muted = get(ctx.message.author.guild.roles, name=silenced)
-    await member.remove_roles(muted)
+
+    memberList = checkUser(ctx, user_substring)
+
+    for member in memberList:
+        await member.remove_roles(muted)
 
 
 # BANNING CAREFUL SUDO
 @bot.command(description="USE ONLY IF YOU REALLY KNOW WHAT YOU ARE DOING")
-async def ban(ctx, member: discord.Member, sudo):
+async def ban(ctx, user_substring, sudo):
 
     if not check(ctx):
         return
 
+    memberList = checkUser(ctx, user_substring)
+
     if sudo == "SUDO":
-        await member.kick()
+        for member in ret:
+            await member.kick()
 
 
 # Add a role to user
@@ -121,30 +165,36 @@ async def addRole(ctx, member: discord.Member, role_name):
 
 # Add master role to user
 @bot.command(description="used to add the Master Of Silence role to specific user", aliases=["Master", "MASTER"])
-async def master(ctx, member: discord.Member):
+async def master(ctx, *, user_substring):
 
     if not check(ctx):
         return
 
-    if str(ctx.message.author).split("#")[0] == "SMAEL":
-        role = get(ctx.message.guild.roles, name=master_role)
+    role = get(ctx.message.guild.roles, name=master_role)
+
+    memberList = checkUser(ctx, user_substring)
+
+    for member in memberList:
         await member.add_roles(role)
 
 
 # Remove a role from user
 @bot.command(description="used to remove a role from specific user", aliases=["removerole", "RemoveRole", "Removerole", "REMOVEROLE"])
-async def removeRole(ctx, member: discord.Member, role_name):
+async def removeRole(ctx, user_substring, role_name):
 
     if not check(ctx):
         return
-    
+
+    memberList = checkUser(ctx, user_substring)
     role = get(ctx.message.author.guild.roles, name=role_name)
-    await member.remove_roles(role)
+
+    for member in memberList:
+        await member.remove_roles(role)
 
 
 # Rename voice channel
 @bot.command(description="used to rename the voice channel user is in", aliases=["renamechannel", "RenameChannel", "Renamechannel", "RENAMECHANNEL"])
-async def renameChannel(ctx, new_name):
+async def renameChannel(ctx, *, new_name):
 
     if not check(ctx):
         return
@@ -155,34 +205,85 @@ async def renameChannel(ctx, new_name):
 
 # Move member to another voice channel
 @bot.command(description="used to move a user to another voice channel", aliases=["Move", "MOVE"])
-async def move(ctx, member: discord.Member, channel):
+async def move(ctx, user_substring, channel):
+
+    if not check(ctx):
+        return
+
+    memberList = checkUser(ctx, user_substring)
+    target = get(ctx.message.guild.voice_channels, name=channel)
+
+    for member in memberList:
+        await member.move_to(target)
+
+
+# Move all members to another voice channel
+@bot.command(description="used to move all users to another voice channel", aliases=["moveall", "MoveAll", "Moveall", "MOVEALL"])
+async def moveAll(ctx, *, channel):
 
     if not check(ctx):
         return
     
     target = get(ctx.message.guild.voice_channels, name=channel)
-    await member.move_to(target)
+    channel = ctx.author.voice.channel
+
+    for member in channel.members:
+        await member.move_to(target)
+
+
+# Kick member from voice channel
+@bot.command(description="used to kick a user from voice channel", aliases=["Kick", "KICK"])
+async def kick(ctx, *, user_substring):
+
+    if not check(ctx):
+        return
+
+    memberList = checkUser(ctx, user_substring)
+    target = get(ctx.message.guild.voice_channels, name="NonExistentChannel")
+
+    for member in memberList:
+        await member.move_to(target)
+
+
+# Kick all members from voice channel
+@bot.command(description="used to kick all users from voice channel", aliases=["kickall", "KickAll", "Kickall", "KICKALL"])
+async def kickAll(ctx):
+
+    if not check(ctx):
+        return
+    
+    target = get(ctx.message.guild.voice_channels, name="NonExistentChannel")
+    channel = ctx.author.voice.channel
+
+    for member in channel.members:
+        await member.move_to(target)
 
 
 # Vyvetrat
 @bot.command(description="used to VYVETRAT SA", aliases=["vyvetrajsa", "Vyvetrajsa", "VyvetrajSa", "VYVETRAJSA"])
-async def vyvetrajSa(ctx, member: discord.Member):
+async def vyvetrajSa(ctx, *, user_substring):
 
     if not check(ctx):
         return
-    
+
+    memberList = checkUser(ctx, user_substring)
     target = get(ctx.message.guild.voice_channels, name="Vetračka")
-    await member.move_to(target)
+
+    for member in memberList:
+        await member.move_to(target)
 
 
 # Change nickname of a user
 @bot.command(description="used to change the nickname of a user", aliases=["Rename", "RENAME"])
-async def rename(ctx, member: discord.Member, name):
+async def rename(ctx, *, user_substring, name):
 
     if not check(ctx):
         return
-    
-    await member.edit(nick=name)
+
+    memberList = checkUser(ctx, user_substring)
+
+    for member in memberList:
+        await member.edit(nick=name)
 
 
 # Maths add
@@ -282,7 +383,7 @@ async def saveguard(ctx, text, tag):
 
 # Read from text file
 @bot.command(description="used to get saved blocks", aliases=["Fetch", "FETCH"])
-async def fetch(ctx, tag):
+async def fetch(ctx, *, tag):
 
     with open("saves.txt", "r") as file:
 
@@ -297,8 +398,10 @@ async def fetch(ctx, tag):
                 exists = True
                 
         if not exists:
+            
             await ctx.send("Tag doesn't exist")
             await ctx.send("Use !saveguard to save a new block")
+            await ctx.send("Use !showTags to show saved tags")
 
 
 # Show saved tags
@@ -315,7 +418,7 @@ async def showTags(ctx):
 
 # Remove from text file
 @bot.command(description="used to remove block from file", aliases=["Erase", "ERASE"])
-async def erase(ctx, tag):
+async def erase(ctx, *, tag):
 
     if not check(ctx):
         return
@@ -341,11 +444,61 @@ async def erase(ctx, tag):
             await ctx.send("Not such tag is saved")
 
 
+# GOOOGLE
+@bot.command(description="used to Gooooogle", aliases=["Google", "GOOGLE"])
+async def google(ctx, *, text):
+    temp = str(text).strip().split(" ")
+    final = ""
+
+    for i in temp:
+            final += "+" + i
+
+    await ctx.send("https://www.google.com/search?q=" + final)
+
+
+# Hide text
+@bot.command(description="used to hide text", aliases=["Hide", "HIDE"])
+async def hide(ctx, *, text):
+
+    ran = random.randrange(3)
+    
+    if ran == 0:
+        await ctx.send("||" + text + "|| ||" + len(text) * "$" + "|| ||" + len(text) * "$" + "||")
+        
+    elif ran == 1:
+        await ctx.send("||" + len(text) * "$" + "|| ||" + text + "|| ||" + len(text) * "$" + "||")
+
+    elif ran == 2:
+        await ctx.send("||" + len(text) * "$" + "|| ||" + len(text) * "$" + "|| ||" + text + "||")
+
+    await ctx.message.delete()
+
+
+### Remind Me something
+##async def remindMe():
+##    await bot.wait_until_ready()
+##
+##    channel = bot.get_channel(634029765694849027)
+##
+##    while not bot.is_closed():
+##        await channel.send("Hey now")
+##        await asyncio.sleep(100)
+
+
 ### ERROR HANDLER
 @bot.event
 async def on_command_error(ctx, error):
-
     await ctx.send("Neznám: " + str(error))
+
+
+# PUUU tsooo
+@bot.event
+async def on_voice_state_update(member, before, after):
+    if before.channel is None and after.channel is not None:
+        if str(member) == "Puco#8084":
+            channel = bot.get_channel(762278005229092864)
+            await channel.send("<@354330847123341312>")
+            await channel.send("Pootststso")
 
 
 # EVENTS (NO COMMAND - NO ! NEEDED)
@@ -384,7 +537,38 @@ async def on_message(message):
         for i in range(str(message.content).lower().count("os")):
             
             await message.channel.send("OS sucks")
+
+    # Hele - prd
+    if str(message.author).split("#")[0] != "Silencer":
+        for i in range(str(message.content).lower().count("hele")):
+            
+            await message.channel.send("PRD")
+
+    # KOHUTKA SUCKS
+    if str(message.author).split("#")[0] != "Silencer":
+        for i in range(str(message.content).lower().count("kohut")):
+
+            await message.channel.send("Kohutka sucks")
+
+    # 30
+    if str(message.author).split("#")[0] != "Silencer":
+        if "30" in str(message.content) or "tridsat" in str(message.content).lower() or "tridsať" in str(message.content).lower():
+
+            await message.channel.send("Poď ma cicať")
+
+    # 31
+    if str(message.author).split("#")[0] != "Silencer":
+        if "31" in str(message.content) or "tridsatjedna" in str(message.content).lower() or "tridsaťjedna" in str(message.content).lower():
+
+            await message.channel.send("Poď ma cicať zjemna")
+
+    # 33
+    if str(message.author).split("#")[0] != "Silencer":
+        if "33" in str(message.content) or "tridsattri" in str(message.content).lower() or "tridsaťtri" in str(message.content).lower():
+
+            await message.channel.send("Poď ma cicať ty")
             
     await bot.process_commands(message)
-    
+
+
 bot.run('NzUzMzY5NDczOTcyNjk5MjE4.X1lL_w.da0llbTo4iww49JZdGSnGceoI6A', bot=True)
