@@ -85,8 +85,26 @@ async def on_ready():
 # Join a voice channel
 @bot.command()
 async def join(ctx):
+
+    memberList = checkUser(ctx, "Silencer#6477")
+    target = get(ctx.message.guild.voice_channels, name=None)
+    
+    for member in memberList:
+        await member.move_to(target)
+    
     channel = ctx.author.voice.channel
     await channel.connect()
+
+
+# Leave voice channel
+@bot.command()
+async def leave(ctx):
+
+    memberList = checkUser(ctx, "Silencer#6477")
+    target = get(ctx.message.guild.voice_channels, name=None)
+    
+    for member in memberList:
+        await member.move_to(target)
 
 
 # Kill program
@@ -450,7 +468,7 @@ async def saveguard(ctx, text, tag):
                 
         if not exists:
             print(tag + divider + text, file=file)
-            await ctx.send("Saved " + text + " as " + tag)
+            await ctx.send("Saved " + tag)
 
 
 # Read from text file
