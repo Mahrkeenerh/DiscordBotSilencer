@@ -636,6 +636,8 @@ def load_remind_stuff():
         
         remind_stuff.append((int(channel), author, message, time))
 
+    file.close()
+
 
 # Save reminders to file
 def save_remind_stuff():
@@ -652,6 +654,8 @@ def save_remind_stuff():
         time = time.strftime("%Y:%m:%d:%H:%M:%S")
 
         print(channel + divider + author + divider + message + divider + time, file=file)
+
+    file.close()
 
 
 # Remind Me something
@@ -683,12 +687,12 @@ async def remind_loop():
         
         await asyncio.sleep(1)
 
-    file.close()
-
 
 # Create OS SUCKS loop
 @bot.command(description="used to generate new os sucks loop", aliases=["addos", "Addos", "AddOs", "AddOS", "ADDOS"])
 async def addOs(ctx):
+
+    global os_sucks_task
 
     if not check(ctx):
         return
@@ -856,4 +860,5 @@ async def answer(ctx):
             await message.channel.send("Yes, I'm a good bot!")
 
 
-bot.run('NzUzMzY5NDczOTcyNjk5MjE4.X1lL_w.da0llbTo4iww49JZdGSnGceoI6A', bot=True)
+file = open("secrets.txt", "r")
+bot.run(file.readline(), bot=True)
