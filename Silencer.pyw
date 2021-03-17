@@ -9,8 +9,8 @@ import datetime
 import asyncio
 
 
-os_sucks_task = False
 remind_stuff = []
+tasks = []
 
 intents = discord.Intents.default()
 intents.members = True
@@ -62,7 +62,7 @@ def checkChannel(ctx, channel_substring):
 @bot.event
 async def on_ready():
 
-    global startTime, os_sucks_task
+    global startTime, tasks
 
     startTime = time.time()
     print('Successfully logged in as {0.user}'.format(bot))
@@ -74,13 +74,14 @@ async def on_ready():
     else:
         await channel.send("Wasup, I'm awake now!")
 
-    if not os_sucks_task:
-        bot.loop.create_task(ossuck())
-        os_sucks_task = True
-        
-    bot.loop.create_task(remind_loop())
-    bot.loop.create_task(kohutkasuck())
-
+    for i in tasks:
+        i.cancel()
+    
+    tasks.append(bot.loop.create_task(ossuck()))
+    tasks.append(bot.loop.create_task(pod_ma()))
+    tasks.append(bot.loop.create_task(remind_loop()))
+    tasks.append(bot.loop.create_task(kohutkasuck()))
+    
 
 # Join a voice channel
 @bot.command()
@@ -569,13 +570,15 @@ async def hide(ctx, *, text):
 async def play(ctx, *, song):
     
     await ctx.send("Playing: " + song)
+    await ctx.send("!play " + song)
 
 
 # Skip
-@bot.command(aliases=["SKIP", "Skip", "fs", "FS", "Fs"])
+@bot.command(aliases=["SKIP", "Skip", "fs", "FS", "Fs", "prepni", "prepnipesnidzgu", "prepniPesnidzgu"])
 async def skip(ctx):
     
     await ctx.send("Yeah, I didn't like that song either.")
+    await ctx.send("!fs")
 
 
 # Create new Reminder
@@ -710,6 +713,27 @@ async def ossuck():
     while not bot.is_closed():
         await channel.send("OS suuucks")
         await asyncio.sleep(60*60)
+
+
+# POD MA
+async def pod_ma():
+
+    await bot.wait_until_ready()
+    
+    channel = bot.get_channel(766598196511899658)
+
+    while not bot.is_closed():
+
+        if datetime.datetime.now().minute == 30:
+
+            while not bot.is_closed():
+            
+                await channel.send("Koľko je hodín?")
+                await channel.send(datetime.datetime.now().strftime("%H:%M"))
+                await channel.send("POĎ MA CICAŤ!")
+                await asyncio.sleep(60 * 60)
+
+        await asyncio.sleep(1)
 
 
 # Kohutk SUCK loop
