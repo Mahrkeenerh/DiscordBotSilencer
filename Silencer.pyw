@@ -726,12 +726,10 @@ async def pod_ma():
 
         if datetime.datetime.now().minute == 30:
 
-            while not bot.is_closed():
-            
-                await channel.send("Koľko je hodín?")
-                await channel.send(datetime.datetime.now().strftime("%H:%M"))
-                await channel.send("POĎ MA CICAŤ!")
-                await asyncio.sleep(60 * 60)
+            await channel.send("Koľko je hodín?")
+            await channel.send(datetime.datetime.now().strftime("%H:%M"))
+            await channel.send("POĎ MA CICAŤ!")
+            await asyncio.sleep(59 * 60)
 
         await asyncio.sleep(1)
 
