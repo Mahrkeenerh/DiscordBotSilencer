@@ -761,6 +761,22 @@ async def on_voice_state_update(member, before, after):
             await channel.send("Pootststso")
 
 
+# Remove extra messages
+@bot.event
+async def on_message(message):
+
+    await bot.process_commands(message)
+
+    print(message)
+    print(message.content)
+    print(message.content[0])
+
+    if message.content[0] in ".!-":
+        print("Yeah, I'm trying")
+        await asyncio.sleep(1)
+        await message.delete()
+
+
 # ANSWER ME
 @bot.command()
 async def answer(ctx):
