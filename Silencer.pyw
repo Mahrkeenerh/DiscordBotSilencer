@@ -767,14 +767,11 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
-    print(message)
-    print(message.content)
-    print(message.content[0])
+    if message.channel.id != 766598196511899658:
 
-    if message.content[0] in ".!-":
-        print("Yeah, I'm trying")
-        await asyncio.sleep(1)
-        await message.delete()
+        if message.content[0] in ".!-+" or True in [i.name == "Bots" for i in message.author.roles]:
+            await asyncio.sleep(1)
+            await message.delete()
 
 
 # ANSWER ME
