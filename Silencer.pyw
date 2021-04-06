@@ -1,19 +1,12 @@
+import discord
+from discord import Permissions
+from discord.ext import commands
+from discord.utils import get
 import random
 import webbrowser
 import time
 import datetime
 import asyncio
-import os
-
-
-try:
-    import discord
-except ImportError:
-    os.system("pip install discord")
-    import discord
-    from discord import Permissions
-    from discord.ext import commands
-    from discord.utils import get
 
 
 remind_stuff = []
