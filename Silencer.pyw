@@ -1,12 +1,18 @@
-import discord
-from discord import Permissions
-from discord.ext import commands
-from discord.utils import get
 import random
 import webbrowser
 import time
 import datetime
 import asyncio
+
+
+try:
+    import discord
+except ImportError:
+    os.system("pip install discord")
+    import discord
+    from discord import Permissions
+    from discord.ext import commands
+    from discord.utils import get
 
 
 remind_stuff = []
@@ -767,7 +773,7 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
-    if message.channel.id != 766598196511899658:
+    if message.channel.id != 766598196511899658 and message.channel.id != 762383597973798953 and message.channel.id != 763403142356271114:
 
         if True in [i.name == "Bots" for i in message.author.roles] or message.content[0] in ".!-+":
             await asyncio.sleep(1)
