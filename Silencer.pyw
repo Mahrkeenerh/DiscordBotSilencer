@@ -12,15 +12,15 @@ import asyncio
 remind_stuff = []
 tasks = []
 
-intents = discord.Intents.default()
-intents.members = True
-bot = commands.Bot(command_prefix = '+', intents=intents)
-
+command_char = "+"
 silenced = "Silenced"
 divider = "(((|||)))"
 master_role = "Master Of Silence"
 startTime = 0
 
+intents = discord.Intents.default()
+intents.members = True
+bot = commands.Bot(command_prefix = command_char, intents=intents)
 
 
 # Check if user has Master of Silence role
@@ -199,31 +199,31 @@ async def unmute(ctx, *, user_substring):
         await member.remove_roles(muted)
 
 
-# BANNING CAREFUL SUDO
-@bot.command(description="USE ONLY IF YOU REALLY KNOW WHAT YOU ARE DOING")
-async def ban(ctx, user_substring, sudo):
+# # BANNING CAREFUL SUDO
+# @bot.command(description="USE ONLY IF YOU REALLY KNOW WHAT YOU ARE DOING")
+# async def ban(ctx, user_substring, sudo):
 
-    if not check(ctx):
-        return
+#     if not check(ctx):
+#         return
 
-    memberList = checkUser(ctx, user_substring)
+#     memberList = checkUser(ctx, user_substring)
 
-    if sudo == "SUDO":
-        await ctx.send("Oh no no no")
-        #for member in ret:
-            #await member.kick()
+#     if sudo == "SUDO":
+#         await ctx.send("Oh no no no")
+#         #for member in ret:
+#             #await member.kick()
 
 
-# Create admin role
-@bot.command(description="single-use")
-async def createadmin(ctx):
+# # Create admin role
+# @bot.command(description="single-use")
+# async def createadmin(ctx):
 
-    if not check(ctx):
-        return
+#     if not check(ctx):
+#         return
 
-    perm = Permissions()
-    perm.update(administrator = True)
-    await ctx.guild.create_role(name="RytierAdmin", colour=discord.Colour(0xFFFFFF), permissions=perm)
+#     perm = Permissions()
+#     perm.update(administrator = True)
+#     await ctx.guild.create_role(name="RytierAdmin", colour=discord.Colour(0xFFFFFF), permissions=perm)
 
 
 # Add a role to user
@@ -476,6 +476,8 @@ async def saveguard(ctx, text, tag):
 @bot.command(description="used to get saved blocks", aliases=["Fetch", "FETCH"])
 async def fetch(ctx, *, tag):
 
+    global command_char
+
     with open("saves.txt", "r") as file:
 
         exists = False
@@ -491,8 +493,8 @@ async def fetch(ctx, *, tag):
         if not exists:
             
             await ctx.send("Tag doesn't exist")
-            await ctx.send("Use !saveguard to save a new block")
-            await ctx.send("Use !showTags to show saved tags")
+            await ctx.send("Use " + command_char + "saveguard to save a new block")
+            await ctx.send("Use " + command_char + "showTags to show saved tags")
 
 
 # Show saved tags
@@ -570,7 +572,6 @@ async def hide(ctx, *, text):
 async def play(ctx, *, song):
     
     await ctx.send("Playing: " + song)
-    await ctx.send("!play " + song)
 
 
 # Skip
@@ -578,7 +579,6 @@ async def play(ctx, *, song):
 async def skip(ctx):
     
     await ctx.send("Yeah, I didn't like that song either.")
-    await ctx.send("!fs")
 
 
 # Create new Reminder
