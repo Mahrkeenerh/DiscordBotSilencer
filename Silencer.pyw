@@ -705,10 +705,10 @@ async def addOs(ctx):
 
 
 # Remove last message from general
-@bot.command(description="DELYNCAK FIX") 
-async def generalDelete(ctx):
+@bot.command(description="DELYNCAK", aliases=["poplast", "Poplast", "PopLast"]) 
+async def popLast(ctx, channel_id):
 
-    channel = bot.get_channel(634029765694849027)
+    channel = bot.get_channel(int(channel_id))
 
     await (await channel.history(limit=1).flatten())[0].delete()
 
