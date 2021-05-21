@@ -704,6 +704,15 @@ async def addOs(ctx):
     os_sucks_task = True
 
 
+# Remove last message from general
+@bot.command(description="DELYNCAK FIX") 
+async def generalDelete(ctx):
+
+    channel = bot.get_channel(634029765694849027)
+
+    await (await channel.history(limit=1).flatten())[0].delete()
+
+
 # OS SUCK loop
 async def ossuck():
     await bot.wait_until_ready()
