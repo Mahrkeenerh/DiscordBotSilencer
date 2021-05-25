@@ -78,6 +78,7 @@ async def on_ready():
         i.cancel()
     
     tasks.append(bot.loop.create_task(ossuck()))
+    tasks.append(bot.loop.create_task(emBecka()))
     tasks.append(bot.loop.create_task(pod_ma()))
     tasks.append(bot.loop.create_task(remind_loop()))
     tasks.append(bot.loop.create_task(kohutkasuck()))
@@ -752,6 +753,17 @@ async def kohutkasuck():
     while not bot.is_closed():
         await channel.send("KOHUTK suuucks big time")
         await asyncio.sleep(60*60)
+
+
+# emBecka loop
+async def emBecka():
+    await bot.wait_until_ready()
+    
+    channel = bot.get_channel(766598196511899658)
+
+    while not bot.is_closed():
+        await channel.send("jóój maňo, emBečka kúsok prehnal")
+        await asyncio.sleep(random.randrange(30, 120) * 60)
 
 
 # ERROR HANDLER
