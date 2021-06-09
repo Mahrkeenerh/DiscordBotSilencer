@@ -790,7 +790,7 @@ async def on_message(message):
 
     if message.channel.id != 766598196511899658 and message.channel.id != 762383597973798953 and message.channel.id != 763403142356271114:
 
-        if True in [i.name == "Bots" for i in message.author.roles] or message.content[0] in ".!-+":
+        if True in [i.name == "Bots" for i in message.author.roles] or (len(message.content) > 0 and message.content[0] in ".!-+"):
             await asyncio.sleep(1)
             await message.delete()
 
