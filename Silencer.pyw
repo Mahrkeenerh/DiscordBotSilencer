@@ -405,10 +405,12 @@ async def showTags(ctx):
 
     with open("saves.txt", "r") as file:
 
-        await ctx.send("Saved tags:")
+        out = "Saved tags:"
         
         for line in file:
-            await ctx.send(line.split(divider)[0])
+            out += "\n" + line.split(divider)[0]
+        
+        await ctx.send(out)
 
 
 # Remove from text file
