@@ -64,11 +64,11 @@ async def on_ready():
 
     if int(datetime.date.today().strftime("%d %m %y").split()[1]) in [11, 12, 1]:
         with open('silencer_winter.png', 'rb') as image:
-            await bot.user.edit(avatar=image)
+            await bot.user.edit(avatar=image.read())
         await channel.send("Ho ho, I'm awake now!")
     else:
         with open('silencer.png', 'rb') as image:
-            await bot.user.edit(avatar=image)
+            await bot.user.edit(avatar=image.read())
         await channel.send("Wasup, I'm awake now!")
 
     for i in tasks:
